@@ -49,6 +49,16 @@ void GameItem::setHP(float theHP)
     HP = theHP;
 }
 
+int GameItem::getItemType()
+{
+    return itemType;
+}
+
+void GameItem::setTtemType(int i)
+{
+    itemType = i;
+}
+
 void GameItem::paint()
 {
     b2Vec2 pos = g_body->GetPosition();
@@ -59,4 +69,9 @@ void GameItem::paint()
     g_pixmap.setPos(mappedPoint);
     g_pixmap.resetTransform();
     g_pixmap.setRotation(-(g_body->GetAngle()*180/3.14159));
+}
+
+void GameItem::killUseless()
+{
+    setHP(0);
 }

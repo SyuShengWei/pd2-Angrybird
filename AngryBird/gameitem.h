@@ -18,16 +18,23 @@ public:
     b2Body & getBody();
     QGraphicsPixmapItem & getPixmap();
     void kill(float hit);
+
     float getHP();
     void setHP(float theHP);
+
+    int  getItemType();
+    void setTtemType(int i);
+
     int ifHit;//0=n,1=y
 
 private:
     float HP;
+    int itemType; // Pig = 1 , Bird = 2 , Wood = 3
 
 public slots:
     void paint();
     // TODO virtual void collide();
+    void killUseless();
 
 protected:
     b2Body *g_body;

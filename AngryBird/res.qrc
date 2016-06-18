@@ -11,5 +11,8 @@
         <file>image/angrybird-black.png</file>
         <file>image/explosion.png</file>
         <file>image/slingslot.png</file>
+        <file>image/exit.png</file>
+        <file>image/lose.jpg</file>
+        <file>image/win.jpg</file>
     </qresource>
 </RCC>

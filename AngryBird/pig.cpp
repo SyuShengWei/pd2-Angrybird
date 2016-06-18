@@ -31,7 +31,8 @@ Pig::Pig(float x, float y, float radius, QTimer *timer, QPixmap pixmap, b2World 
     g_body->SetAngularDamping(3);
 
     connect(timer, SIGNAL(timeout()), this,SLOT(paint()));
-
     scene->addItem(&g_pixmap);
+    //
+    setTtemType(1);
 }
 

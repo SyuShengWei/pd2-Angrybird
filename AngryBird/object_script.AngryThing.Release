@@ -10,6 +10,7 @@ INPUT(
 ./release\yellowbird.o
 ./release\bluebird.o
 ./release\blockbird.o
+./release\score.o
 ./release\qrc_res.o
 ./release\moc_mainwindow.o
 ./release\moc_gameitem.o

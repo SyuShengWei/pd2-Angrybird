@@ -5,6 +5,9 @@
 #include <QPixmap>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <score.h>
+
+extern Score *score;
 
 #define PIG_DENSITY 15.0f
 #define PIG_FRICTION 0.2f

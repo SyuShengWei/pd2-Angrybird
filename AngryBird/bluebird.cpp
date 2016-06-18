@@ -10,6 +10,7 @@ BlueBird::BlueBird(float x, float y, float radius, QTimer *timer, QPixmap pixmap
 int BlueBird::birdAbility()
 {
     //bird ability
+    killTimer->start(3000);
     //std::cout<<"Ability"<<std::endl;
     return 2;
     //new bird

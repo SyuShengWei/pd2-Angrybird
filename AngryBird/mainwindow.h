@@ -26,6 +26,8 @@
 #include <yellowbird.h>
 #include <bluebird.h>
 #include <blockbird.h>
+#include <score.h>
+
 
 namespace Ui {
 class MainWindow;
@@ -54,13 +56,18 @@ signals:
     void quitGame();
 
 private slots:
+    //keep game slot
     void tick();
     // For debug slot
     void QUITSLOT();
+    //timer slots
     void createBird();
     void hidePixmap();
-
+    //buttom slots
     void restart();
+    void exitGame();
+
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -72,6 +79,8 @@ private:
     QTimer *pixmapTimer;
     QGraphicsPixmapItem * explosion;
     QGraphicsPixmapItem * slingslot;
+    QGraphicsPixmapItem *endGamePix;
+    Score *score;
 
     int hold;
     float mousePress_X,mousePress_Y,mouseRelease_X,mouseRelease_Y;
@@ -80,7 +89,13 @@ private:
     int birdStep; // 0=next ,1=can hold,2=can move,3=can release,4=can us ability
     int birdAbility;//0=no ability ,1=can use ability,2=blue bird ability on,3=block bird on
     int whichBird;
-    int noBird;
+    //bird left
+    int birdLeft;
+    int pigLeft;
+
+    void checkLeft();
+    void endGame(int signal);
+
 };
 
 #endif // MAINWINDOW_H

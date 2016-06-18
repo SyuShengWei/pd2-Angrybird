@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     edge.cpp \
     yellowbird.cpp \
     bluebird.cpp \
-    blockbird.cpp
+    blockbird.cpp \
+    score.cpp
 
 HEADERS  += mainwindow.h \
     Box2D/Collision/Shapes/b2ChainShape.h \
@@ -80,7 +81,8 @@ HEADERS  += mainwindow.h \
     edge.h \
     yellowbird.h \
     bluebird.h \
-    blockbird.h
+    blockbird.h \
+    score.h
 
 FORMS    += mainwindow.ui
 

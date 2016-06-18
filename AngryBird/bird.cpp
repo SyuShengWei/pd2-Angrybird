@@ -31,8 +31,12 @@ Bird::Bird(float x, float y, float radius, QTimer *timer, QPixmap pixmap, b2Worl
     connect(timer, SIGNAL(timeout()), this,SLOT(paint()));
 
     scene->addItem(&g_pixmap);
-}
+    //
+    setTtemType(2);
 
+    killTimer = new QTimer();
+    connect(killTimer,SIGNAL(timeout()),this,SLOT(killUseless()));
+}
 
 void Bird::setLinearVelocity(b2Vec2 velocity)
 {
@@ -42,7 +46,8 @@ void Bird::setLinearVelocity(b2Vec2 velocity)
 int Bird::birdAbility()
 {
     //bird ability
-    std::cout<<"Ability"<<std::endl;
+    //std::cout<<"Ability"<<std::endl;
+    killTimer->start(6000);
 
     //new bird
     return 0 ;
@@ -53,7 +58,8 @@ int Bird::getBirdType() const
     return birdType;
 }
 
-int Bird::setBirdType(int i)
+void Bird::setBirdType(int i)
 {
     birdType = i ;
 }
+

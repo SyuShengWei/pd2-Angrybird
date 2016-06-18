@@ -18,7 +18,9 @@ public:
     void setLinearVelocity(b2Vec2 velocity);
     int virtual birdAbility();
     int getBirdType()const;
-    int setBirdType(int i);
+    void setBirdType(int i);
+    QTimer *killTimer;
+
 private:
     int birdType;
 };

@@ -12,7 +12,8 @@ YellowBird::YellowBird(float x, float y, float radius, QTimer *timer, QPixmap pi
 int YellowBird::birdAbility()
 {
     //bird ability
-    std::cout<<"Ability"<<std::endl;
+    //std::cout<<"Ability"<<std::endl;
+    killTimer->start(3000);
     this->getBody().SetLinearVelocity(b2Vec2(this->getBody().GetLinearVelocity().x * 2,this->getBody().GetLinearVelocity().y * 2));
 
     //new bird

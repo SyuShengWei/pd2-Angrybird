@@ -10,6 +10,7 @@ BlockBird::BlockBird(float x, float y, float radius, QTimer *timer, QPixmap pixm
 int BlockBird::birdAbility()
 {
     //bird ability
+    killTimer->start(3000);
     //std::cout<<"Ability"<<std::endl;
     return 3;
     //new bird

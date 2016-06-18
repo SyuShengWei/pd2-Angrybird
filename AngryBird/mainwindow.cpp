@@ -15,10 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //mouse hold
     hold  = 0 ;
-
     //what stattion the bird is;
     birdStep = 0 ;
-    //
+    //which bird to hold
     whichBird = 0;
     //create bird Timer
     createTimer = new QTimer();
@@ -28,12 +27,15 @@ MainWindow::MainWindow(QWidget *parent) :
     explosion->setPixmap(QPixmap(":/image/explosion.png"));
     explosion->hide();
     pixmapTimer = new QTimer();
-    //
+    //set sling slop picture
     slingslot= new QGraphicsPixmapItem();
     slingslot->setPixmap(QPixmap(":/image/slingslot.png"));
     slingslot->setPos(125,355);
-    //
-    noBird = 0;
+    //create score
+    score = new Score;
+    //create endGame pic0
+    endGamePix= new QGraphicsPixmapItem();
+    endGamePix->setPos(100,50);
 }
 
 MainWindow::~MainWindow()
@@ -52,26 +54,46 @@ void MainWindow::showEvent(QShowEvent *)
 
     //restartbuttom
     QPushButton *restart =  new QPushButton();
-    restart->setGeometry(QRect(QPoint(700,0),QSize(55,55)));
+    restart->setGeometry(QRect(QPoint(680,0),QSize(55,55)));
     QPixmap pixmap(":/image/restart.png");
     QIcon ButtonIcon(pixmap);
     restart->setIcon(ButtonIcon);
     restart->setIconSize(pixmap.rect().size());
     scene->addWidget(restart);  
     connect(restart,SIGNAL(clicked(bool)),this,SLOT(restart()));
+    //exit buttom
+    QPushButton *exit =  new QPushButton();
+    exit->setGeometry(QRect(QPoint(740,0),QSize(55,55)));
+    QPixmap exitPixmap(":/image/exit.png");
+    QIcon exitIcon(exitPixmap);
+    exit->setIcon(exitIcon);
+    exit->setIconSize(exitPixmap.rect().size());
+    scene->addWidget(exit);
+    connect(exit,SIGNAL(clicked(bool)),this,SLOT(exitGame()));
     // Create world
     world = new b2World(b2Vec2(0.0f, -9.8f));
     // Setting Size
     GameItem::setGlobalSize(QSizeF(32,18),QSize(800,600));
-    //
+    //set Explosion ability Picture
     scene->addItem(explosion);
     connect(pixmapTimer,SIGNAL(timeout()),this,SLOT(hidePixmap()));
-    //
+    //set slingslot pocture
     scene->addItem(slingslot);
     slingslot->show();
+    //set endFame Pic
+    scene->addItem(endGamePix);
 
     initialGame();
+    checkLeft();
 
+    //set score
+    score = new Score();
+    score->setBirdLeft(4-whichBird);
+    score->setPlainText("Score = " + QString::number(score->getScore()) + "\n" + "Bird Left = " + QString::number(score->getBirdLeft()));
+    score->setDefaultTextColor(Qt::red);
+    score->setFont(QFont("timer",16));
+    scene->addItem(score);
+    score->setPos(550,15);
 
     // Timer
     connect(&timer,SIGNAL(timeout()),this,SLOT(tick()));
@@ -83,7 +105,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
 {
     mouseEvent = (QMouseEvent *) event ;
 
-    if(event->type() == QEvent::MouseButtonPress && noBird == 0)
+    if(event->type() == QEvent::MouseButtonPress && birdLeft != 0 && whichBird != 4)
     {   //birdStep == 0 ,hold the bird
         if(birdStep == 0){
         hold = 1 ;
@@ -98,10 +120,11 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
             birdAbility = birdList[whichBird]->birdAbility();
             //blue ability
             if(birdAbility == 2){
-                BlueBird * avatarBird = new BlueBird(birdList[whichBird]->getBody().GetPosition().x ,birdList[whichBird]->getBody().GetPosition().y + 2,
+                Bird * avatarBird = new Bird(birdList[whichBird]->getBody().GetPosition().x ,birdList[whichBird]->getBody().GetPosition().y + 2,
                                                     0.27f,&timer,QPixmap(":/image/angrybird_blue.png").scaled(height()/12.0,height()/12.0),world,scene);
                 avatarBird->setLinearVelocity(b2Vec2(birdList[whichBird]->getBody().GetLinearVelocity().x ,birdList[whichBird]->getBody().GetLinearVelocity().y + 3));
                 avatarBird->getBody().SetGravityScale(1);
+                avatarBird->birdAbility();
                 itemList.push_back(avatarBird);
             }
             //block ability
@@ -131,7 +154,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         }
     }
     //if hold the bird ,set the bird pos as where the mouse is
-    if(event->type() == QEvent::MouseMove && hold >= 1 && noBird == 0)
+    if(event->type() == QEvent::MouseMove && hold >= 1 && birdLeft != 0 && whichBird != 4)
     {
        if(birdStep == 1 || birdStep == 2){
             float pos_X = (mouseEvent->pos().x()-23) /800.0*32.0;
@@ -145,7 +168,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
 
     }
 
-    if(event->type() == QEvent::MouseButtonRelease  && noBird == 0)
+    if(event->type() == QEvent::MouseButtonRelease  && birdLeft != 0 && whichBird != 4)
     {
         if(birdStep == 2){
             hold = 0;
@@ -157,7 +180,9 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
 
             birdList[whichBird]->getBody().SetLinearVelocity(b2Vec2((positionNow_X- originalPos_X)*-5,(positionNow_Y- originalPos_Y)*-5 ));
             birdList[whichBird]->getBody().SetGravityScale(1);
+
             if(birdList[whichBird]->getBirdType() == 0){
+               birdList[whichBird]->birdAbility();
                createTimer->start(500);
                birdStep = 0 ;
                std::cout << birdStep <<std::endl;
@@ -180,6 +205,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 {
     // Close event
     emit quitGame();
+    //qApp->exit(1);
 }
 
 void MainWindow::initialGame()
@@ -209,15 +235,15 @@ void MainWindow::initialGame()
     birdList.push_back(bird1);
     itemList.push_back(bird1);
 
-    BlockBird *bird2 = new BlockBird(130.0f,0.0f,0.27f,&timer,QPixmap(":/image/angrybird-black.png").scaled(height()/9.0,height()/9.0),world,scene);
+    BlockBird *bird2 = new BlockBird(100.0f,5.0f,0.27f,&timer,QPixmap(":/image/angrybird-black.png").scaled(height()/9.0,height()/9.0),world,scene);
     birdList.push_back(bird2);
     itemList.push_back(bird2);
 
-    YellowBird *bird3 = new YellowBird(120.0f,0.0f,0.27f,&timer,QPixmap(":/image/angrybird-yellow.png").scaled(height()/9.0,height()/9.0),world,scene);
+    YellowBird *bird3 = new YellowBird(100.0f,5.0f,0.27f,&timer,QPixmap(":/image/angrybird-yellow.png").scaled(height()/9.0,height()/9.0),world,scene);
     birdList.push_back(bird3);
     itemList.push_back(bird3);
 
-    BlueBird *bird4 = new BlueBird(100.0f,0.0f,0.27f,&timer,QPixmap(":/image/angrybird_blue.png").scaled(height()/12.0,height()/12.0),world,scene);
+    BlueBird *bird4 = new BlueBird(100.0f,4.0f,0.27f,&timer,QPixmap(":/image/angrybird_blue.png").scaled(height()/12.0,height()/12.0),world,scene);
     birdList.push_back(bird4);
     itemList.push_back(bird4);
 
@@ -228,8 +254,27 @@ void MainWindow::destoryTtem()
 {
     foreach(GameItem *i ,itemList){
         if (i->getHP() <=0){
+            switch(i->getItemType()){
+                case  1 :
+                    score->increaseScore(1000);
+                    pigLeft --;
+                break;
+                case  2:
+                    score->increaseScore(500);
+                    birdLeft -- ;
+                break;
+                case  3:
+                    score->increaseScore(200);
+                break;
+            }
             itemList.removeOne(i);
             delete i ;
+            if(pigLeft == 0)
+                endGame(1);
+            else if(pigLeft > 0 && birdLeft == 0)
+                endGame(0);
+            //score->increaseScore(100);
+           // std::cout<<"score="<<i->getItemType()<<" ="<<score->getScore()<<std::endl;
         }
     }
 }
@@ -262,13 +307,18 @@ void MainWindow::QUITSLOT()
 void MainWindow::createBird()
 {
     whichBird = whichBird + 1 ;
-    if(whichBird <= 3)
+    if(whichBird <= 3){
         birdList[whichBird]->getBody().SetTransform(b2Vec2(5.0f,8.0f),0);
+    }
     else{
-        whichBird = 0;
-        noBird = 1;
+        whichBird = 4;
     }
     createTimer->stop();
+
+    score->setBirdLeft(4-whichBird);
+    score->setPlainText("Score = " + QString::number(score->getScore()) + "\n" + "Bird Left = " + QString::number(score->getBirdLeft()));
+    score->setDefaultTextColor(Qt::red);
+    score->setFont(QFont("timer",16));
 }
 
 void MainWindow::hidePixmap()
@@ -292,10 +342,56 @@ void MainWindow::restart()
     birdStep    = 0;
     birdAbility = 0;
     whichBird   =0;
-    noBird = 0;
+
+    score->setScore(0);
+    score->setBirdLeft(4-whichBird);
+    score->setPlainText("Score = " + QString::number(score->getScore()) + "\n" + "Bird Left = " + QString::number(score->getBirdLeft()));
+    score->setDefaultTextColor(Qt::red);
+    score->setFont(QFont("timer",16));
+
 
     initialGame();
+    checkLeft();
     world->Step(1.0/60.0,6,2);
     scene->update();
     timer.start();
+
+    endGamePix->hide();
+}
+
+void MainWindow::exitGame()
+{
+    QCloseEvent * event;
+    closeEvent(event);
+    //qApp->exit(1);
+}
+
+void MainWindow::checkLeft()
+{
+    birdLeft = 0;
+    pigLeft  = 0;
+    foreach(GameItem * item ,itemList){
+        switch(item->getItemType()){
+        case 1:
+            pigLeft ++;
+            break;
+        case 2:
+            birdLeft++;
+            break;
+        }
+    }
+}
+
+void MainWindow::endGame(int signal)
+{
+    switch(signal){
+        case 0://lose
+            endGamePix->setPixmap(QPixmap(":/image/lose.jpg"));
+            endGamePix->show();
+            break;
+        case 1://win
+            endGamePix->setPixmap(QPixmap(":/image/win.jpg"));
+            endGamePix->show();
+            break;
+    }
 }

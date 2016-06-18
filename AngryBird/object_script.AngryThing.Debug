@@ -10,6 +10,7 @@ INPUT(
 ./debug\yellowbird.o
 ./debug\bluebird.o
 ./debug\blockbird.o
+./debug\score.o
 ./debug\qrc_res.o
 ./debug\moc_mainwindow.o
 ./debug\moc_gameitem.o

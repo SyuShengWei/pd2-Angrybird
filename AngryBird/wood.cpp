@@ -31,4 +31,6 @@ Wood::Wood(float x, float y, float w,float h, QTimer *timer, QPixmap pixmap, b2W
     connect(timer, SIGNAL(timeout()), this,SLOT(paint()));
 
     scene->addItem(&g_pixmap);
+    //
+    setTtemType(3);
 }
