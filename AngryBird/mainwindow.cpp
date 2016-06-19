@@ -69,7 +69,9 @@ void MainWindow::showEvent(QShowEvent *)
     exit->setIcon(exitIcon);
     exit->setIconSize(exitPixmap.rect().size());
     scene->addWidget(exit);
+
     connect(exit,SIGNAL(clicked(bool)),this,SLOT(exitGame()));
+
     // Create world
     world = new b2World(b2Vec2(0.0f, -9.8f));
     // Setting Size
@@ -205,7 +207,6 @@ void MainWindow::closeEvent(QCloseEvent *)
 {
     // Close event
     emit quitGame();
-    //qApp->exit(1);
 }
 
 void MainWindow::initialGame()
@@ -361,10 +362,9 @@ void MainWindow::restart()
 
 void MainWindow::exitGame()
 {
-    QCloseEvent * event;
-    closeEvent(event);
-    //qApp->exit(1);
+    emit quitGame();
 }
+
 
 void MainWindow::checkLeft()
 {

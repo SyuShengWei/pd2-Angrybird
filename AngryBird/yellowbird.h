@@ -7,7 +7,7 @@ class YellowBird : public Bird
 {
 public:
     YellowBird(float x, float y, float radius, QTimer *timer, QPixmap pixmap, b2World *world, QGraphicsScene *scene);
-    virtual birdAbility();
+    virtual int birdAbility();
 };
 
 #endif // YELLOWBIRD_H

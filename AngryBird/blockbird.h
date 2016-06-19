@@ -7,7 +7,7 @@ class BlockBird : public Bird
 {
 public:
     BlockBird(float x, float y, float radius, QTimer *timer, QPixmap pixmap, b2World *world, QGraphicsScene *scene);
-    virtual birdAbility();
+    virtual int birdAbility();
 };
 
 #endif // BLOCKBIRD_H

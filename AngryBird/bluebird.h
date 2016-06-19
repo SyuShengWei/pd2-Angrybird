@@ -7,6 +7,6 @@ class BlueBird : public Bird
 {
 public:
     BlueBird(float x, float y, float radius, QTimer *timer, QPixmap pixmap, b2World *world, QGraphicsScene *scene);
-    virtual birdAbility();
+    virtual int birdAbility();
 };
 #endif // BLUEBIRD_H

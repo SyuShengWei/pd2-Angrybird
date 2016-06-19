@@ -44,8 +44,6 @@ public:
     bool eventFilter(QObject *,QEvent *event);
     void closeEvent(QCloseEvent *);
 
-    void restartGame();
-
     void initialGame();
     void destoryTtem();
     void hit();
